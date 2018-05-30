@@ -1,0 +1,10 @@
+<ivy-module version="2.0">
+    <info organisation="edu.baj" module="fperrorbounds"/>    
+    <configurations>
+        <conf name="sources"  description="Source jars"/>
+        <conf name="binaries" description="binary jars"/>
+    </configurations>
+    <dependencies>
+        <dependency org="org.apache.commons" name="commons-math3" rev="3.2"/>
+    </dependencies>    
+</ivy-module>
