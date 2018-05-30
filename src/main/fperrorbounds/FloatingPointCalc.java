@@ -12,18 +12,26 @@ public class FloatingPointCalc  {
 
     public static float probCalc() {
         float a = (float) sampleDouble(-1000, 1000);
+        BigDecimal bd = BigDecimal.valueOf((double) a);
 
         a = a + 1000;
-        for (int i = 0; i < 1000; i++)
+        bd = bd.add(BigDecimal.valueOf(1000));
+        for (int i = 0; i < 1000; i++) {
             a = a + ((float) .00001);
+            bd = bd.add(BigDecimal.valueOf(.00001));
+        }
 
+        // FPError: 
+        System.out.println(bd);
+        System.out.println(a);
+        bd = bd.negate();
+        bd = bd.add(BigDecimal.valueOf((double) a));
+        System.out.println("Error: " + bd);
         return a;
-        // assert error on a is less than 5%   
     }
 
     public static double sampleDouble(double min, double max) {
         UniformRealDistribution urd =  new UniformRealDistribution(min, max);
         return urd.sample();
     }
-
 }
