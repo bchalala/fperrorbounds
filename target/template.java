@@ -1,4 +1,5 @@
 import org.apache.commons.math3.distribution.UniformRealDistribution;
+import java.lang.Math;
 
 public class TestHarness {
     public static double sample(double min, double max) {
@@ -7,6 +8,9 @@ public class TestHarness {
     }
 
     public static double test() {
-        return 0.0;
+        double floatRes = (double) fnFloat();
+        double doubleRes = fnDouble();
+        double error = abs(doubleRes - floatRes) / doubleRes;
+        return error;
     }
 }
