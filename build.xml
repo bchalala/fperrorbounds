@@ -1,4 +1,4 @@
-<project name="fperrorbounds" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="fperrorbound" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <property name="src" location="src"/>
     <property name="build" location="build"/>
@@ -6,6 +6,7 @@
 
     <path id="build.path">
         <pathelement location="${lib}/binaries/commons-math3.jar"/>
+        <pathelement location="${lib}/binaries/javaparser-core.jar"/>
     </path>
 
     <available classname="org.apache.ivy.Main" property="ivy.installed"/> 
@@ -36,21 +37,21 @@
         </javac>
     </target>
 
-    <target name="jar">
+    <target name="jar" depends="compile">
         <mkdir dir="${build}/jar"/>
-        <jar destfile="${build}/jar/fperrorbounds.jar" 
+        <jar destfile="${build}/jar/fperrorbound.jar" 
              basedir="${build}/classes" 
              includes="edu/baj/**">
 
             <zipgroupfileset dir="${lib}/binaries/" includes="*.jar"/>
             <manifest>
-                <attribute name="Main-Class" value="edu.baj.fperrorbounds.FloatingPointCalc"/>
+                <attribute name="Main-Class" value="edu.baj.fperrorbound.FPErrorBound"/>
             </manifest>
         </jar>
     </target>
 
     <target name="run">
-        <java jar="${build}/jar/fperrorbounds.jar" fork="true"/>
+        <java jar="${build}/jar/fperrorbound.jar" fork="true"/>
     </target>
 
 </project>

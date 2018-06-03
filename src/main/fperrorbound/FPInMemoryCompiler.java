@@ -1,5 +1,4 @@
-package edu.baj.fperrorbounds;
-
+package edu.baj.fperrorbound;
 
 import javax.tools.*;
 import java.io.File;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 // - Expects there to not be any overloading
 // - Making method static makes it much easier but not need
 
-public class InMemoryCompiler{
+public class FPInMemoryCompiler{
 
     protected String className = "";
     private boolean classLoaded = false;
@@ -23,7 +22,7 @@ public class InMemoryCompiler{
     private DiagnosticCollector<JavaFileObject> diagnostic = new DiagnosticCollector<JavaFileObject>();
 
     private Class<?> loadedClass;
-    public InMemoryCompiler() {}
+    public FPInMemoryCompiler() {}
 
 
     public void compileInMemory(String classname, String source)
@@ -99,7 +98,7 @@ class JavaSourceFromString extends SimpleJavaFileObject {
 //     public static void main(String[] args) {
 //         try {
 //             System.out.println("About to invoke");
-//             InMemoryCompiler imc = new InMemoryCompiler();
+//             FPInMemoryCompiler imc = new FPInMemoryCompiler();
 //             imc.compileInMemory("HelloWorld", source);
 //             imc.loadCompiledClass();
 //             imc.getMethod("testInstanced").invoke(imc.getInstanciatedClass().getConstructor(null).newInstance(null));
