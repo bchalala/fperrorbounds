@@ -15,14 +15,18 @@ public class FPErrorBound {
             System.err.println("Error: Could not generate test harness.");
         }
 
+        FPInMemoryCompiler imc = new FPInMemoryCompiler();
         try {
-            FPInMemoryCompiler imc = new FPInMemoryCompiler();
             imc.compileInMemory("TestHarness", program);
+        } catch (Exception e) {
+            System.err.println("Error compiling the TestHarness");
+        }
+
+        try {
             double res = (double) imc.getMethod("test").invoke(null);
             System.out.println("Error is " + res);
-
         } catch (Exception e) {
-            System.err.println("Error invoking the TestHarness");
+            System.err.println("Error invoking the test harness");
         }
     }
 }
