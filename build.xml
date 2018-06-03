@@ -1,4 +1,4 @@
-<project name="fperrorbounds" default="compile" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="fperrorbounds" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <property name="src" location="src"/>
     <property name="build" location="build"/>
@@ -25,6 +25,8 @@
     </target>
 
     <target name="clean-all">
+        <delete dir="${build}"/>
+        <delete dir="${lib}"/>
         <ivy:cleancache />
     </target>
 
