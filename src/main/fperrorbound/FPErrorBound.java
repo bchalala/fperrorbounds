@@ -7,10 +7,22 @@ import org.apache.commons.math3.distribution.UniformRealDistribution;
 public class FPErrorBound { 
 
     public static void main(String[] args) {
+        String program = "";
         try {
-            System.out.print(FPJavaCodeGenerator.generateHarness("target/input.java"));
+            program = FPJavaCodeGenerator.generateHarness("target/input.java");
+            System.out.println(program);
         } catch (Exception e) {
             System.err.println("Error: Could not generate test harness.");
+        }
+
+        try {
+            FPInMemoryCompiler imc = new FPInMemoryCompiler();
+            imc.compileInMemory("TestHarness", program);
+            double res = (double) imc.getMethod("test").invoke(null);
+            System.out.println("Error is " + res);
+
+        } catch (Exception e) {
+            System.err.println("Error invoking the TestHarness");
         }
     }
 }
