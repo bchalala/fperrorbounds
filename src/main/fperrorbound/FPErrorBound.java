@@ -20,7 +20,7 @@ public class FPErrorBound {
             imc.compileInMemory("TestHarness", program);
             imc.loadCompiledClass();
         } catch (Exception e) {
-            System.err.println("Error compiling the TestHarness");
+            System.err.println("Error compiling the test harness");
         }
 
         try {

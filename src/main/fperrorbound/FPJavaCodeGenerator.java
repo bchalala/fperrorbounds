@@ -86,6 +86,7 @@ public class FPJavaCodeGenerator {
         modifiers.add(Modifier.STATIC);
         getmethodvisitor.visit(cu, null);
         getmethodvisitor.methodDecl.setModifiers(modifiers);
+        getmethodvisitor.methodDecl.remove(getmethodvisitor.methodDecl.getAnnotation(0));
         return getmethodvisitor.methodDecl.clone();
     }
 
@@ -144,4 +145,3 @@ public class FPJavaCodeGenerator {
         }
     }
 }
-
