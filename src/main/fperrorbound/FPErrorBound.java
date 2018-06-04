@@ -18,6 +18,7 @@ public class FPErrorBound {
         FPInMemoryCompiler imc = new FPInMemoryCompiler();
         try {
             imc.compileInMemory("TestHarness", program);
+            imc.loadCompiledClass();
         } catch (Exception e) {
             System.err.println("Error compiling the TestHarness");
         }
