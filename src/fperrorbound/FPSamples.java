@@ -1,4 +1,4 @@
-package edu.baj.fperrorbound;
+package fperrorbound;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;

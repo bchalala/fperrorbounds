@@ -40,12 +40,11 @@
     <target name="jar" depends="compile">
         <mkdir dir="${build}/jar"/>
         <jar destfile="${build}/jar/fperrorbound.jar" 
-             basedir="${build}/classes" 
-             includes="edu/baj/**">
+             basedir="${build}/classes">
 
             <zipgroupfileset dir="${lib}/binaries/" includes="*.jar"/>
             <manifest>
-                <attribute name="Main-Class" value="edu.baj.fperrorbound.FPErrorBound"/>
+                <attribute name="Main-Class" value="fperrorbound.FPErrorBound"/>
             </manifest>
         </jar>
     </target>

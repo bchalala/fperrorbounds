@@ -1,4 +1,4 @@
-package edu.baj.fperrorbound;
+package fperrorbound;
 import java.util.Random;
 import java.math.BigDecimal;
 import java.util.stream.DoubleStream;

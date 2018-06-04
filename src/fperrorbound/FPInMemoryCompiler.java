@@ -1,4 +1,4 @@
-package edu.baj.fperrorbound;
+package fperrorbound;
 
 import javax.tools.*;
 import java.io.File;

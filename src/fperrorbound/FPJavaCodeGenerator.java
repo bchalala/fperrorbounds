@@ -1,4 +1,4 @@
-package edu.baj.fperrorbound;
+package fperrorbound;
 
 import java.io.FileInputStream;
 import java.util.Optional;
@@ -64,7 +64,6 @@ public class FPJavaCodeGenerator {
         MethodCallExpr sample = new MethodCallExpr("sample");
         sample.addArgument("-1000");
         sample.addArgument("1000");
-        
         VariableDeclarationExpr decl = new VariableDeclarationExpr(PrimitiveType.doubleType(), "a" + numSamples);
         AssignExpr assignexpr = new AssignExpr(decl, sample, AssignExpr.Operator.ASSIGN);
         body.addStatement(0, assignexpr);
