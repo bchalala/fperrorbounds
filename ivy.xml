@@ -5,7 +5,7 @@
         <conf name="binaries" description="binary jars"/>
     </configurations>
     <dependencies>
-        <dependency org="org.apache.commons" name="commons-math3" rev="3.2"/>
+        <dependency org="org.apache.commons" name="commons-math3" rev="3.6"/>
         <dependency org="com.github.javaparser" name="javaparser-core" rev="3.6.7"/>
     </dependencies>    
 </ivy-module>
