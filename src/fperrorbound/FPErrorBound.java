@@ -7,7 +7,9 @@ public class FPErrorBound {
             System.out.println(args[0]);
             // Generate the test harness program
             FPErrorAnnotation annotation = new FPErrorAnnotation(args[0]);
-            var testHarness = FPJavaCodeGenerator.generateHarness(args[0], annotation.min, annotation.max);
+            FPJavaCodeGenerator gen = new FPJavaCodeGenerator(args[0], annotation);
+            var testHarness = gen.genStandardHarness();
+            System.out.println(testHarness);
             
             // Compile the test harness in memory and get the test method
             FPInMemoryCompiler imc = new FPInMemoryCompiler();
@@ -23,10 +25,6 @@ public class FPErrorBound {
                 if(Math.abs(res) <= annotation.precision){
                     currentPassCount++;
                 }
-//                if(currentPassCount == numberOfPassSamples){
-//                    break;
-//                }
-                System.out.println("Error is " + res);
             }
             if(currentPassCount >= numberOfPassSamples){
                 System.out.println(String.format("Passed with %d / %d", currentPassCount, numberOfSamples));

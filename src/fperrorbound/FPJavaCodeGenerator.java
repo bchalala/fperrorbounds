@@ -31,39 +31,61 @@ public class FPJavaCodeGenerator {
 
     private static GetMethodVisitor getmethodvisitor = new GetMethodVisitor();
     private static DoubleReplacementVisitor doublereplacementvisitor = new DoubleReplacementVisitor();
+    
+    private MethodDeclaration origMethodDecl;
+    private MethodDeclaration allDoublesMethodDecl;
+    private CompilationUnit template;
+    private FPErrorAnnotation annotation;
 
-    public static String generateHarness(String file) throws Exception {
-        // Parse the input
-        var in = new FileInputStream(file);
-        CompilationUnit cu = JavaParser.parse(in);
+    private int harnessNumber;
 
+    public FPJavaCodeGenerator(String file, FPErrorAnnotation annotation) throws Exception {
         // Parse the template file
-        in = new FileInputStream("target/template.java");
-        CompilationUnit templateCu = JavaParser.parse(in);
-        ClassOrInterfaceDeclaration testharness = templateCu.getClassByName("TestHarness").get();
+        var in = new FileInputStream("target/template.java");
+        template = JavaParser.parse(in);
+        
+        // Parse the input
+        in = new FileInputStream(file);
+        CompilationUnit cu = JavaParser.parse(in);
+        origMethodDecl = getMethod(cu);
+        allDoublesMethodDecl = createMethodDoubleClone(origMethodDecl);
+
+        harnessNumber = 0;
+
+        this.annotation = annotation;
+    }
+
+    private String genHarness(MethodDeclaration fnFloat, MethodDeclaration fnDouble) {
+        CompilationUnit templateClone = template.clone();
+        ClassOrInterfaceDeclaration testharness = templateClone.getClassByName("TestHarness").get();
+        testharness.setName("TestHarness" + harnessNumber);
 
         // Adds modified methods to the test harness
-        var origMethodDecl = getMethod(cu);
-        testharness.addMember(origMethodDecl);
-        var methodDeclDoubleClone = createMethodDoubleClone(origMethodDecl);
-        testharness.addMember(methodDeclDoubleClone);
+        testharness.addMember(fnFloat);
+        testharness.addMember(fnDouble);
 
         // Sample all arguments
         MethodDeclaration testMethod = testharness.getMethodsByName("test").get(0);
         BlockStmt testbody = testMethod.getBody().get();
-        sampleArgs(testbody, origMethodDecl.getParameters().size());
-        buildTestCalls(testbody, origMethodDecl.getParameters().size());
+        sampleArgs(testbody, fnFloat.getParameters().size());
+        buildTestCalls(testbody, fnFloat.getParameters().size());
 
-        return(templateCu.toString());
+        return(templateClone.toString());
+    } 
+
+    public String genStandardHarness() throws Exception {
+        String harness = genHarness(origMethodDecl, allDoublesMethodDecl);
+        harnessNumber += 1;
+        return harness;
     }
 
-    public static void sampleArgs(BlockStmt body, int numSamples) {
+    public void sampleArgs(BlockStmt body, int numSamples) {
         if (numSamples <= 0)
             return;
         
         MethodCallExpr sample = new MethodCallExpr("sample");
-        sample.addArgument("-1000");
-        sample.addArgument("1000");
+        sample.addArgument(String.valueOf(annotation.min[numSamples-1]));
+        sample.addArgument(String.valueOf(annotation.max[numSamples-1]));
         VariableDeclarationExpr decl = new VariableDeclarationExpr(PrimitiveType.doubleType(), "a" + numSamples);
         AssignExpr assignexpr = new AssignExpr(decl, sample, AssignExpr.Operator.ASSIGN);
         body.addStatement(0, assignexpr);
