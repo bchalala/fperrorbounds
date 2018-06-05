@@ -11,7 +11,9 @@ public class FPErrorBound {
         try {
             // Generate the test harness program
             FPErrorAnnotation annotation = new FPErrorAnnotation(args[0]);
-            var testHarness = FPJavaCodeGenerator.generateHarness(args[0]);
+            FPJavaCodeGenerator gen = new FPJavaCodeGenerator(args[0], annotation);
+            var testHarness = gen.genStandardHarness();
+            System.out.println(testHarness);
             
             // Compile the test harness in memory and get the test method
             FPInMemoryCompiler imc = new FPInMemoryCompiler();
@@ -30,7 +32,6 @@ public class FPErrorBound {
                 if(currentPassCount == numberOfPassSamples){
                     break;
                 }
-                System.out.println("Error is " + res);
             }
             if(currentPassCount > numberOfPassSamples){
                 
