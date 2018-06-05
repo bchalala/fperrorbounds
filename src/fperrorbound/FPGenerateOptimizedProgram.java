@@ -10,38 +10,23 @@ public class FPGenerateOptimizedProgram {
     public static List<FPTestProgram> getValidPrograms(List<FPTestProgram> synthesizedPrograms,FPErrorAnnotation annotation) throws Exception{
         List<FPTestProgram> validPrograms = new ArrayList<>();
         for(FPTestProgram program: synthesizedPrograms){
-            FPInMemoryCompiler imc = new FPInMemoryCompiler();
-            imc.compileInMemory(program.harnessClass, program.program);
-            imc.loadCompiledClass();
-            Method method = imc.getMethod("test");
-            Method fnFloat = imc.getMethod("fnFloat");
+            Method fnFloat = FPErrorBound.returnCompiledMethod("fnFloat",program);
+
             int numberOfSamples = FPSamples.generateSampleNumber(annotation.epsilon,annotation.confidence);
             int numberOfPassSamples = (int) ((annotation.confidence*numberOfSamples)/100);
-            int currentPassCount = 0;
-            System.out.println("Samples required: " + numberOfPassSamples);
 
-            for(int i=0;i<numberOfSamples;i++) {
-                double res = (double) method.invoke(null);
-                System.out.println("Error is: " + res);
-                if(Math.abs(res) <= annotation.precision){
-                    currentPassCount++;
-                }
-            }
-
-            if(currentPassCount >= numberOfPassSamples){
+            if(FPErrorBound.verifyProgram(program,annotation)){
                 long startTime = System.nanoTime();
                 for(int i=0;i<numberOfPassSamples;i++){
-                    float res = (float) fnFloat.invoke(null);
+                    fnFloat.invoke(null);
                 }
                 long estimatedTime = System.nanoTime() - startTime;
                 program.estimatedRunTime = estimatedTime;
                 validPrograms.add(program);
-                System.out.println(String.format("Passed with %d / %d", currentPassCount, numberOfSamples));
             }
         }
         return validPrograms;
     }
-
 
     public static FPTestProgram getOptimizedProgram(List<FPTestProgram> programs){
         Collections.sort(programs,FPTestProgram.ProgramComparator);
