@@ -1,14 +1,10 @@
 package fperrorbound;
 import java.lang.reflect.Method;
-import java.util.Random;
-import java.math.BigDecimal;
-import java.util.stream.DoubleStream;
-import org.apache.commons.math3.distribution.UniformRealDistribution;
 
-public class FPErrorBound { 
-
+public class FPErrorBound {
     public static void main(String[] args) {
         try {
+            System.out.println(args[0]);
             // Generate the test harness program
             FPErrorAnnotation annotation = new FPErrorAnnotation(args[0]);
             FPJavaCodeGenerator gen = new FPJavaCodeGenerator(args[0], annotation);
@@ -26,15 +22,16 @@ public class FPErrorBound {
             int currentPassCount = 0;
             for(int i=0;i<numberOfSamples;i++) {
                 double res = (double) method.invoke(null);
-                if(res <= annotation.precision){
+                if(Math.abs(res) <= annotation.precision){
                     currentPassCount++;
                 }
-                if(currentPassCount == numberOfPassSamples){
-                    break;
-                }
             }
-            if(currentPassCount > numberOfPassSamples){
-                
+            if(currentPassCount >= numberOfPassSamples){
+                System.out.println(String.format("Passed with %d / %d", currentPassCount, numberOfSamples));
+            }
+            else
+            {
+                System.out.println(String.format("Failed with %d / %d, needed %d", currentPassCount, numberOfSamples, numberOfPassSamples));
             }
 
         } catch (Exception e) {
