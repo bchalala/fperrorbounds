@@ -10,7 +10,7 @@ public class TestHarness {
     public static double test() {
         double floatRes = (double) fnFloat();
         double doubleRes = fnDouble();
-        double error = Math.abs((doubleRes - floatRes) / doubleRes);
-        return error;
+        double difference = Math.abs(doubleRes - floatRes);
+        return difference;
     }
 }
