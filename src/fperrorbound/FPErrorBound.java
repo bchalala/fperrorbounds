@@ -9,7 +9,7 @@ public class FPErrorBound {
     public static void main(String[] args) {
         String program = "";
         try {
-            program = FPJavaCodeGenerator.generateHarness("target/input.java");
+            program = FPJavaCodeGenerator.generateHarness("target/Quadratic.java");
             System.out.println(program);
         } catch (Exception e) {
             System.err.println("Error: Could not generate test harness.");
