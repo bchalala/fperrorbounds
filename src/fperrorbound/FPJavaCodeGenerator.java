@@ -1,29 +1,19 @@
 package fperrorbound;
 
-import java.io.FileInputStream;
-import java.util.Optional;
-import java.util.EnumSet;
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.Parameter;
-import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.expr.DoubleLiteralExpr;
+import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.ExpressionStmt;
-import com.github.javaparser.ast.stmt.Statement;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.printer.YamlPrinter;
 import com.github.javaparser.ast.type.PrimitiveType;
-import com.github.javaparser.ast.type.PrimitiveType.Primitive;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.expr.DoubleLiteralExpr;
-import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+
+import java.io.FileInputStream;
+import java.util.EnumSet;
 
 
 
@@ -86,8 +76,8 @@ public class FPJavaCodeGenerator {
             return;
         
         MethodCallExpr sample = new MethodCallExpr("sample");
-        sample.addArgument("-1000");
-        sample.addArgument("1000");
+        sample.addArgument(String.valueOf(annotation.min.get(annotation.min.size() - numSamples)));
+        sample.addArgument(String.valueOf(annotation.max.get(annotation.max.size() - numSamples)));
         VariableDeclarationExpr decl = new VariableDeclarationExpr(PrimitiveType.doubleType(), "a" + numSamples);
         AssignExpr assignexpr = new AssignExpr(decl, sample, AssignExpr.Operator.ASSIGN);
         body.addStatement(0, assignexpr);
