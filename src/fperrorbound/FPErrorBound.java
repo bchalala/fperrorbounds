@@ -1,4 +1,5 @@
 package fperrorbound;
+import java.lang.reflect.Method;
 import java.util.Random;
 import java.math.BigDecimal;
 import java.util.stream.DoubleStream;
@@ -14,8 +15,14 @@ public class FPErrorBound {
             FPInMemoryCompiler imc = new FPInMemoryCompiler();
             imc.compileInMemory("TestHarness", program);
             imc.loadCompiledClass();
-            double res = (double) imc.getMethod("test").invoke(null);
-            System.out.println("Error is " + res);
+            Method method = imc.getMethod("test");
+            FPErrorAnnotation annotation = new FPErrorAnnotation("target/Quadratic.java");
+            int numberOfSamples = FPSamples.generateSampleNumber(annotation.epsilon,annotation.confidence);
+            for(int i=0;i<numberOfSamples;i++) {
+                double res = (double) method.invoke(null);
+                System.out.println("Error is " + res);
+            }
+
         } catch (Exception e) {
             System.err.println("Error invoking the test harness");
         }
