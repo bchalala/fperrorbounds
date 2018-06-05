@@ -1,18 +1,17 @@
 
 public class Test {
     @ConfidenceAnnotation(
-            epsilon=0.03,
+            epsilon=0.01,
             confidence = 95.0,
-            precision = 0.02,
-            min = {1.9,2.0},
-            max = {2.9,2.0}
+            precision = 0.005,
+            min = .2,
+            max = 100000000000000000.0
     )
     public static float probCalc(float a) {
-        a = a + 1000;
         for (int i = 0; i < 1000; i++) {
-            a = a + ((float) .00001);
+            a = a / 60;
+            a = a * 59;
         }
-
         return a;
     }
 }

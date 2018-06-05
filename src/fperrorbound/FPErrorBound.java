@@ -21,8 +21,12 @@ public class FPErrorBound {
             int numberOfSamples = FPSamples.generateSampleNumber(annotation.epsilon,annotation.confidence);
             int numberOfPassSamples = (int) ((annotation.confidence*numberOfSamples)/100);
             int currentPassCount = 0;
+
+            System.out.println("Samples required: " + numberOfPassSamples);
+
             for(int i=0;i<numberOfSamples;i++) {
                 double res = (double) method.invoke(null);
+                System.out.println("Error is: " + res);
                 if(Math.abs(res) <= annotation.precision){
                     currentPassCount++;
                 }
