@@ -11,19 +11,9 @@ public class FPErrorBound {
         try {
             program = FPJavaCodeGenerator.generateHarness("target/Quadratic.java");
             System.out.println(program);
-        } catch (Exception e) {
-            System.err.println("Error: Could not generate test harness.");
-        }
-
-        FPInMemoryCompiler imc = new FPInMemoryCompiler();
-        try {
+            FPInMemoryCompiler imc = new FPInMemoryCompiler();
             imc.compileInMemory("TestHarness", program);
             imc.loadCompiledClass();
-        } catch (Exception e) {
-            System.err.println("Error compiling the test harness");
-        }
-
-        try {
             double res = (double) imc.getMethod("test").invoke(null);
             System.out.println("Error is " + res);
         } catch (Exception e) {
