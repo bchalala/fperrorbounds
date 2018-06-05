@@ -45,7 +45,7 @@ public class FPJavaCodeGenerator {
         this.annotation = annotation;
     }
 
-    private FPTestProgram genHarness(MethodDeclaration fnFloat, MethodDeclaration fnDouble) {
+    private FPTestProgram genHarness(MethodDeclaration fnFloat) {
         CompilationUnit templateClone = template.clone();
         ClassOrInterfaceDeclaration testharness = templateClone.getClassByName("TestHarness").get();
         var harnessName = "TestHarness" + harnessNumber;
@@ -54,7 +54,7 @@ public class FPJavaCodeGenerator {
 
         // Adds modified methods to the test harness
         testharness.addMember(fnFloat);
-        testharness.addMember(fnDouble);
+        testharness.addMember(allDoublesMethodDecl);
 
         // Sample all arguments
         MethodDeclaration testMethod = testharness.getMethodsByName("test").get(0);
@@ -68,7 +68,7 @@ public class FPJavaCodeGenerator {
     } 
 
     public FPTestProgram genStandardHarness() throws Exception {
-        return genHarness(origMethodDecl, allDoublesMethodDecl);
+        return genHarness(origMethodDecl);
     }
 
     public void sampleArgs(BlockStmt body, int numSamples) {
