@@ -8,15 +8,17 @@ import org.apache.commons.math3.distribution.UniformRealDistribution;
 public class FPErrorBound { 
 
     public static void main(String[] args) {
-        String program = "";
         try {
-            program = FPJavaCodeGenerator.generateHarness(args[0]);
-            System.out.println(program);
+            // Generate the test harness program
+            FPErrorAnnotation annotation = new FPErrorAnnotation(args[0]);
+            var testHarness = FPJavaCodeGenerator.generateHarness(args[0]);
+            
+            // Compile the test harness in memory and get the test method
             FPInMemoryCompiler imc = new FPInMemoryCompiler();
-            imc.compileInMemory("TestHarness", program);
+            imc.compileInMemory("TestHarness", testHarness);
             imc.loadCompiledClass();
             Method method = imc.getMethod("test");
-            FPErrorAnnotation annotation = new FPErrorAnnotation("target/Quadratic.java");
+            
             int numberOfSamples = FPSamples.generateSampleNumber(annotation.epsilon,annotation.confidence);
             int numberOfPassSamples = (int) ((annotation.confidence*numberOfSamples)/100);
             int currentPassCount = 0;
