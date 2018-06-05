@@ -44,7 +44,6 @@ public class FPErrorAnnotation {
             method = n.getName().asString();
             if(n.getAnnotations() != null){
                 for(AnnotationExpr annotationExpr : n.getAnnotations()){
-                    System.out.println(annotationExpr.getClass());
                     NormalAnnotationExpr expr = (NormalAnnotationExpr) annotationExpr;
                     methodAnnotations.put(n.getName().toString(),expr.getPairs());
                 }

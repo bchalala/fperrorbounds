@@ -55,10 +55,12 @@ public class FPJavaCodeGenerator {
         this.annotation = annotation;
     }
 
-    private String genHarness(MethodDeclaration fnFloat, MethodDeclaration fnDouble) {
+    private FPTestProgram genHarness(MethodDeclaration fnFloat, MethodDeclaration fnDouble) {
         CompilationUnit templateClone = template.clone();
         ClassOrInterfaceDeclaration testharness = templateClone.getClassByName("TestHarness").get();
-        testharness.setName("TestHarness" + harnessNumber);
+        var harnessName = "TestHarness" + harnessNumber;
+        testharness.setName(harnessName);
+        harnessNumber++;
 
         // Adds modified methods to the test harness
         testharness.addMember(fnFloat);
@@ -70,13 +72,13 @@ public class FPJavaCodeGenerator {
         sampleArgs(testbody, fnFloat.getParameters().size());
         buildTestCalls(testbody, fnFloat.getParameters().size());
 
-        return(templateClone.toString());
+        System.out.println(templateClone.toString());
+        System.out.println(harnessName);
+        return new FPTestProgram(templateClone.toString(), harnessName);
     } 
 
-    public String genStandardHarness() throws Exception {
-        String harness = genHarness(origMethodDecl, allDoublesMethodDecl);
-        harnessNumber += 1;
-        return harness;
+    public FPTestProgram genStandardHarness() throws Exception {
+        return genHarness(origMethodDecl, allDoublesMethodDecl);
     }
 
     public void sampleArgs(BlockStmt body, int numSamples) {
@@ -84,8 +86,8 @@ public class FPJavaCodeGenerator {
             return;
         
         MethodCallExpr sample = new MethodCallExpr("sample");
-        sample.addArgument(String.valueOf(annotation.min[numSamples-1]));
-        sample.addArgument(String.valueOf(annotation.max[numSamples-1]));
+        sample.addArgument("-1000");
+        sample.addArgument("1000");
         VariableDeclarationExpr decl = new VariableDeclarationExpr(PrimitiveType.doubleType(), "a" + numSamples);
         AssignExpr assignexpr = new AssignExpr(decl, sample, AssignExpr.Operator.ASSIGN);
         body.addStatement(0, assignexpr);

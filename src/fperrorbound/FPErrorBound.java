@@ -4,16 +4,17 @@ import java.lang.reflect.Method;
 public class FPErrorBound {
     public static void main(String[] args) {
         try {
-            System.out.println(args[0]);
-            // Generate the test harness program
+            System.out.println("Input file: " + args[0]);
+            
             FPErrorAnnotation annotation = new FPErrorAnnotation(args[0]);
+            System.out.println("Annotations successfully parsed.");
+
             FPJavaCodeGenerator gen = new FPJavaCodeGenerator(args[0], annotation);
             var testHarness = gen.genStandardHarness();
-            System.out.println(testHarness);
             
             // Compile the test harness in memory and get the test method
             FPInMemoryCompiler imc = new FPInMemoryCompiler();
-            imc.compileInMemory("TestHarness", testHarness);
+            imc.compileInMemory(testHarness.harnessClass, testHarness.program);
             imc.loadCompiledClass();
             Method method = imc.getMethod("test");
             
