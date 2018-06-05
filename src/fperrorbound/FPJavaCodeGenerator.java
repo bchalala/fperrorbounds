@@ -3,14 +3,17 @@ package fperrorbound;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.DoubleLiteralExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.printer.YamlPrinter;
 
 import java.io.FileInputStream;
 import java.util.EnumSet;
@@ -29,6 +32,8 @@ public class FPJavaCodeGenerator {
     private FPErrorAnnotation annotation;
 
     private int harnessNumber;
+
+    private YamlPrinter printer = new YamlPrinter(true);
 
     public FPJavaCodeGenerator(String file, FPErrorAnnotation annotation) throws Exception {
         // Parse the template file
@@ -63,8 +68,6 @@ public class FPJavaCodeGenerator {
         sampleArgs(testbody, fnFloat.getParameters().size());
         buildTestCalls(testbody, fnFloat.getParameters().size());
 
-        System.out.println(templateClone.toString());
-        System.out.println(harnessName);
         return new FPTestProgram(templateClone.toString(), harnessName);
     } 
 
@@ -73,6 +76,19 @@ public class FPJavaCodeGenerator {
     }
 
     public ArrayList<FPTestProgram> generateAllProgramPermutations() {
+        var floatMethod = allDoublesMethodDecl.clone();
+        floatMethod.setName("fnFloat");
+        System.out.println(printer.output(floatMethod));
+
+        // Things that can be floats are: Return statement (+ output type), Variables
+
+        GetDoubleVariables gdv = new GetDoubleVariables();
+        gdv.visit(allDoublesMethodDecl.getBody().get(), null);
+        for (Node n : gdv.doubleNodes) {
+            String s = printer.output(n.getParentNode().get());
+            System.out.println(n.getParentNode().get());
+            System.out.println(s);
+        }
         return null;
     }
 
@@ -112,6 +128,8 @@ public class FPJavaCodeGenerator {
         md = md.clone();
         md.setName("fnDouble");
         doublereplacementvisitor.visit(md, null);
+        ChangeFloatingPointLiteralVisitor cfp = new ChangeFloatingPointLiteralVisitor(true);
+        cfp.visit(md, null);
         return md;
     }
 
@@ -133,15 +151,6 @@ public class FPJavaCodeGenerator {
         public void visit(PrimitiveType n, Void arg) {
             if (n.getType() == PrimitiveType.Primitive.FLOAT) {
                 n.setType(PrimitiveType.Primitive.DOUBLE);
-            }
-        }
-    }
-
-    private static class GetDoubleVariables extends VoidVisitorAdapter<Void> {
-        @Override
-        public void visit(PrimitiveType n, Void arg) {
-            if (n.getType() == PrimitiveType.Primitive.DOUBLE) {
-                System.out.println(n.getParentNode());
             }
         }
     }
@@ -169,6 +178,41 @@ public class FPJavaCodeGenerator {
                     n.addArgument(argname + i);
                 }
             }
+        }
+    }
+
+    private static class GetDoubleVariables extends VoidVisitorAdapter<Void> {
+        protected ArrayList<Node> doubleNodes = new ArrayList<>();
+
+        @Override
+        public void visit(PrimitiveType n, Void arg) {
+            if (n.getType() == PrimitiveType.Primitive.DOUBLE) {
+                doubleNodes.add(n);
+            }
+        }
+    }
+
+    private static class ChangeFloatingPointLiteralVisitor extends VoidVisitorAdapter<Void> {
+        boolean floatToDouble;
+
+        public ChangeFloatingPointLiteralVisitor(boolean floatToDouble) {
+            this.floatToDouble = floatToDouble;
+        }
+
+        @Override
+        public void visit(DoubleLiteralExpr n, Void arg) {
+            char toReplace = 'd';
+            char replaceStr = 'f';
+            if (floatToDouble) {
+                toReplace = 'f';
+                replaceStr = 'd';
+            }
+            String newValue = n.getValue().replace(toReplace, replaceStr);
+            if (!newValue.contains("f") && !floatToDouble) {
+                newValue = newValue + "f";
+            }
+
+            n.setValue(newValue);
         }
     }
 }

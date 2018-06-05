@@ -3,25 +3,35 @@ import java.lang.reflect.Method;
 
 public class FPErrorBound {
     public static void main(String[] args) {
+
+        boolean codeGenerationMode = false;
         try {
             System.out.println("Input file: " + args[0]);
-            
             FPErrorAnnotation annotation = new FPErrorAnnotation(args[0]);
             System.out.println("Annotations successfully parsed.");
-
             FPJavaCodeGenerator gen = new FPJavaCodeGenerator(args[0], annotation);
-            System.out.println("FPJavaCodeGenerator initialized.");
-            var testHarness = gen.genStandardHarness();
-            System.out.println("Test harness successfully generated");
+            System.out.println("Code generation is initialized.");
 
-            if (verifyProgram(testHarness, annotation)) {
-                System.out.println("Q.E.D.");
-            } else {
-                System.out.println("Unable to verify.");
+            if (codeGenerationMode) {
+                try {
+                    var programList = gen.generateAllProgramPermutations();
+                } catch (Exception e) { System.out.println("Code generation failed."); }
+            } 
+            else {
+                try {
+                    var testHarness = gen.genStandardHarness();
+                    System.out.println("Test harness successfully generated");
+                    System.out.println(testHarness.program);
+                    if (verifyProgram(testHarness, annotation)) {
+                        System.out.println("Q.E.D.");
+                    } else {
+                        System.out.println("Unable to verify with current annotation.");
+                    }
+                } catch (Exception e) { System.out.println("Error generating and running test harness."); }
             }
-            
+
         } catch (Exception e) {
-            System.err.println("Error generating test harness");
+            System.err.println("Error initializing code generation.");
         }
     }
 
@@ -41,7 +51,6 @@ public class FPErrorBound {
 
             for(int i = 0; i < numberOfSamples; i++) {
                 double res = (double) method.invoke(null);
-                System.out.println("Error is: " + res);
                 if(Math.abs(res) <= annotation.precision){
                     currentPassCount++;
                 }
