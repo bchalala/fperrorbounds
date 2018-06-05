@@ -10,7 +10,7 @@ public class FPErrorBound {
     public static void main(String[] args) {
         String program = "";
         try {
-            program = FPJavaCodeGenerator.generateHarness("target/Quadratic.java");
+            program = FPJavaCodeGenerator.generateHarness(args[0]);
             System.out.println(program);
             FPInMemoryCompiler imc = new FPInMemoryCompiler();
             imc.compileInMemory("TestHarness", program);
