@@ -7,7 +7,7 @@ public class FPErrorBound {
             System.out.println(args[0]);
             // Generate the test harness program
             FPErrorAnnotation annotation = new FPErrorAnnotation(args[0]);
-            var testHarness = FPJavaCodeGenerator.generateHarness(args[0]);
+            var testHarness = FPJavaCodeGenerator.generateHarness(args[0], annotation.min, annotation.max);
             
             // Compile the test harness in memory and get the test method
             FPInMemoryCompiler imc = new FPInMemoryCompiler();
