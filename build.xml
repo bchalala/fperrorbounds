@@ -49,8 +49,11 @@
         </jar>
     </target>
 
+    
     <target name="run">
-        <java jar="${build}/jar/fperrorbound.jar" fork="true"/>
+        <java jar="${build}/jar/fperrorbound.jar" fork="true">
+            <arg value = "${input}"/>
+        </java>
     </target>
 
 </project>
