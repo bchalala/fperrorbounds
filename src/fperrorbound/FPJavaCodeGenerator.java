@@ -14,6 +14,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import java.io.FileInputStream;
 import java.util.EnumSet;
+import java.util.ArrayList;
 
 
 
@@ -69,6 +70,10 @@ public class FPJavaCodeGenerator {
 
     public FPTestProgram genStandardHarness() throws Exception {
         return genHarness(origMethodDecl);
+    }
+
+    public ArrayList<FPTestProgram> generateAllProgramPermutations() {
+        return null;
     }
 
     public void sampleArgs(BlockStmt body, int numSamples) {
@@ -128,6 +133,15 @@ public class FPJavaCodeGenerator {
         public void visit(PrimitiveType n, Void arg) {
             if (n.getType() == PrimitiveType.Primitive.FLOAT) {
                 n.setType(PrimitiveType.Primitive.DOUBLE);
+            }
+        }
+    }
+
+    private static class GetDoubleVariables extends VoidVisitorAdapter<Void> {
+        @Override
+        public void visit(PrimitiveType n, Void arg) {
+            if (n.getType() == PrimitiveType.Primitive.DOUBLE) {
+                System.out.println(n.getParentNode());
             }
         }
     }
