@@ -14,11 +14,12 @@ public class FPGenerateOptimizedProgram {
             imc.compileInMemory(program.harnessClass, program.program);
             imc.loadCompiledClass();
             Method method = imc.getMethod("test");
+            Method fnFloat = imc.getMethod("fnFloat");
             int numberOfSamples = FPSamples.generateSampleNumber(annotation.epsilon,annotation.confidence);
             int numberOfPassSamples = (int) ((annotation.confidence*numberOfSamples)/100);
             int currentPassCount = 0;
             System.out.println("Samples required: " + numberOfPassSamples);
-            long startTime = System.nanoTime();
+
             for(int i=0;i<numberOfSamples;i++) {
                 double res = (double) method.invoke(null);
                 System.out.println("Error is: " + res);
@@ -26,8 +27,13 @@ public class FPGenerateOptimizedProgram {
                     currentPassCount++;
                 }
             }
-            long estimatedTime = System.nanoTime() - startTime;
+
             if(currentPassCount >= numberOfPassSamples){
+                long startTime = System.nanoTime();
+                for(int i=0;i<numberOfPassSamples;i++){
+                    float res = (float) fnFloat.invoke(null);
+                }
+                long estimatedTime = System.nanoTime() - startTime;
                 program.estimatedRunTime = estimatedTime;
                 validPrograms.add(program);
                 System.out.println(String.format("Passed with %d / %d", currentPassCount, numberOfSamples));
