@@ -30,8 +30,6 @@ public class FPSamplingVerification {
 
     public int checkIfNormal(double[] error){
         KolmogorovSmirnovTest kolmogorovSmirnovTest = new KolmogorovSmirnovTest();
-
-
         return 0;
     }
 }

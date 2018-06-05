@@ -18,6 +18,7 @@ public class FPErrorBound {
             Method method = imc.getMethod("test");
             FPErrorAnnotation annotation = new FPErrorAnnotation("target/Quadratic.java");
             int numberOfSamples = FPSamples.generateSampleNumber(annotation.epsilon,annotation.confidence);
+            int numberOfPassSamples =
             for(int i=0;i<numberOfSamples;i++) {
                 double res = (double) method.invoke(null);
                 System.out.println("Error is " + res);
