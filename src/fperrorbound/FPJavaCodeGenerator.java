@@ -101,10 +101,10 @@ public class FPJavaCodeGenerator {
 
     public void sampleArgs(ClassOrInterfaceDeclaration testharness, BlockStmt body, int numSamples) {
         String methodCall = "";
-        if (annotation.sampleMethod.equals("Uniform")) {
-            methodCall = "sampleUniform";
-        } else if (annotation.sampleMethod.equals("Gaussian")) {
-            methodCall = "sampleGaussian";
+        if (annotation.sampleMethod.equals("uniform")) {
+            methodCall = "uniform";
+        } else if (annotation.sampleMethod.equals("gaussian")) {
+            methodCall = "gaussian";
         } else {
             methodCall = annotation.sampleMethod;
             GetMethodVisitor gmv = new GetMethodVisitor(methodCall, methodCall);
@@ -115,7 +115,7 @@ public class FPJavaCodeGenerator {
         
         for (int i = numSamples - 1; i >= 0; i--) {
             MethodCallExpr sample = new MethodCallExpr(methodCall);
-            if (annotation.sampleMethod.equals("Uniform") || annotation.sampleMethod.equals("Gaussian")) {
+            if (annotation.sampleMethod.equals("uniform") || annotation.sampleMethod.equals("gaussian")) {
                 sample.addArgument(String.valueOf(annotation.min.get(i)));
                 sample.addArgument(String.valueOf(annotation.max.get(i)));
             }

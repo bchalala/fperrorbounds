@@ -3,7 +3,7 @@ public class ArcLength {
             epsilon=0.03,
             confidence = 95.0,
             precision = 0.1,
-            sample = "Uniform",
+            sample = "uniform",
             min = {0.0009,140.89},
             max = {2.5,360.0}
     )

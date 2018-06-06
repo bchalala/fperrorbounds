@@ -3,7 +3,7 @@ public class Exp {
             epsilon=0.03,
             confidence = 95.0,
             precision = 0.000001,
-            sample = "Uniform",
+            sample = "uniform",
             min = {0.8},
             max = {1.2}
     )

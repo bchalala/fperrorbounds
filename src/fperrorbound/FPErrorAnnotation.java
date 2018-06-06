@@ -31,7 +31,7 @@ public class FPErrorAnnotation {
         precision = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(2).getValue().asDoubleLiteralExpr().asDouble();
         sampleMethod = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asStringLiteralExpr().asString();
         System.out.println(sampleMethod);
-        if (sampleMethod.equals("Uniform") || sampleMethod.equals("Gaussian"))
+        if (sampleMethod.equals("uniform") || sampleMethod.equals("gaussian"))
         {
             int size = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(4).getValue().asArrayInitializerExpr().getValues().size();
             for(int j=0;j<size;j++){
