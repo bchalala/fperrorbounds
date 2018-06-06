@@ -32,10 +32,12 @@ public class FPGenerateOptimizedProgram {
             for (int i = 0; i < numberOfPassSamples; i++) {
                 Double[] functionArgs = new Double[annotation.min.size()];
                 for(int j=0;j<annotation.min.size();j++){
+                    //var a = sample.getParameterTypes();
+                    //Arrays.stream(a).forEach(x -> System.out.println(x.getName()));
                     functionArgs[j] = (Double) sample.invoke(null,annotation.min.get(j),annotation.max.get(j));
                 }
                 long startTime = System.nanoTime();
-                 fnFloat.invoke(null);
+                fnFloat.invoke(null);
                 estimatedTime = estimatedTime+ (System.nanoTime() - startTime);
 
             }

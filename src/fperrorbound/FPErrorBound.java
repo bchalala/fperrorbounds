@@ -45,7 +45,7 @@ public class FPErrorBound {
         FPInMemoryCompiler imc = new FPInMemoryCompiler();
         imc.compileInMemory(testProgram.harnessClass, testProgram.program);
         imc.loadCompiledClass();
-        Method method = imc.getMethod("test");
+        Method method = imc.getMethod(methodName);
         return method;
     }
 
