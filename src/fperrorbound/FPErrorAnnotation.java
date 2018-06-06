@@ -30,9 +30,10 @@ public class FPErrorAnnotation {
         epsilon = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(0).getValue().asDoubleLiteralExpr().asDouble();
         confidence = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(1).getValue().asDoubleLiteralExpr().asDouble();
         precision = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(2).getValue().asDoubleLiteralExpr().asDouble();
-        for(int i = 3; i < methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).size(); i+=2) {
-            min.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asDoubleLiteralExpr().asDouble());
-            max.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(4).getValue().asDoubleLiteralExpr().asDouble());
+        int size = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asArrayInitializerExpr().getValues().size();
+        for(int j=0;j<size;j++){
+            min.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asArrayInitializerExpr().getValues().get(j).asDoubleLiteralExpr().asDouble());
+            max.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asArrayInitializerExpr().getValues().get(j).asDoubleLiteralExpr().asDouble());
         }
     }
 
