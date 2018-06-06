@@ -30,16 +30,28 @@ public class FPGenerateOptimizedProgram {
 
         if (FPErrorBound.verifyProgram(program, annotation)) {
             for (int i = 0; i < numberOfPassSamples; i++) {
-                Double[] functionArgs = new Double[annotation.min.size()];
+                double[] functionArgs = new double[annotation.min.size()];
                 for(int j=0;j<annotation.min.size();j++){
                     //var a = sample.getParameterTypes();
                     //Arrays.stream(a).forEach(x -> System.out.println(x.getName()));
-                    functionArgs[j] = (Double) sample.invoke(null,annotation.min.get(j),annotation.max.get(j));
+                    functionArgs[j] = (double) sample.invoke(null,annotation.min.get(j),annotation.max.get(j));
                 }
                 long startTime = System.nanoTime();
-                fnFloat.invoke(null);
-                estimatedTime = estimatedTime+ (System.nanoTime() - startTime);
 
+                if(methodName.equals("fnFloat")) {
+                    if (annotation.min.size() == 1) {
+                        fnFloat.invoke(null, (float)functionArgs[0]);
+                    } else {
+                        fnFloat.invoke(null, (float)functionArgs[0], (float)functionArgs[1]);
+                    }
+                } else{
+                    if (annotation.min.size() == 1) {
+                        fnFloat.invoke(null, functionArgs[0]);
+                    } else {
+                        fnFloat.invoke(null, functionArgs[0], functionArgs[1]);
+                    }
+                }
+                estimatedTime = estimatedTime + (System.nanoTime() - startTime);
             }
 
 
