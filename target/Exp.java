@@ -13,6 +13,7 @@ public class Test {
         z = (float)Math.exp(y);
         if(z != 1.0f)
             z = y / (z - 1.0f);
+        System.out.println(z);
         return z;
     }
 }

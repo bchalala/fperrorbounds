@@ -11,7 +11,6 @@ public class Test {
         float c = -0.0015f;
         float x1 = (-b - (b < 0 ? -1f : 1f) * (float)Math.sqrt(b * b - 4f * a * c))/(2f * a);
         float x2 = c / (a * x1);
-        System.out.println(x1);
         return x2;
     }
 }

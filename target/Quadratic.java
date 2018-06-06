@@ -10,7 +10,6 @@ public class Test {
         float a = 1.0f;
         float c = -0.0015f;
         float x1 = (-b  + (float)Math.sqrt(b * b - 4f * a * c))/ (2f * a);
-        System.out.println(x1);
         return x1;
     }
 }
