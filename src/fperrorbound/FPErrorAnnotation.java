@@ -33,7 +33,7 @@ public class FPErrorAnnotation {
         int size = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asArrayInitializerExpr().getValues().size();
         for(int j=0;j<size;j++){
             min.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asArrayInitializerExpr().getValues().get(j).asDoubleLiteralExpr().asDouble());
-            max.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asArrayInitializerExpr().getValues().get(j).asDoubleLiteralExpr().asDouble());
+            max.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(4).getValue().asArrayInitializerExpr().getValues().get(j).asDoubleLiteralExpr().asDouble());
         }
     }
 
