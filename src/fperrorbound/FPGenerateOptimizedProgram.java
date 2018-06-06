@@ -45,7 +45,7 @@ public class FPGenerateOptimizedProgram {
                 if (fnFloat.getParameterCount() < 2 ) {
                     fnFloat.invoke(null, (float)functionArgs[0]);
                 } else {
-                    System.out.println(fnFloat.invoke(null, (float)functionArgs[0], (float)functionArgs[1]));
+                    FPErrorBound.log(fnFloat.invoke(null, (float)functionArgs[0], (float)functionArgs[1]));
                 }
             } else{
                 if (fnFloat.getParameterCount() < 2) {

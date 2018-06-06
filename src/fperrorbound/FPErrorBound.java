@@ -3,7 +3,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 public class FPErrorBound {
+    public static boolean debug = false;
+
     public static void main(String[] args) {
+
 
         boolean codeGenerationMode = false;
         try {
@@ -22,10 +25,16 @@ public class FPErrorBound {
                 try {
                     var testHarness = gen.genStandardHarness();
                     System.out.println("Test harness successfully generated");
-                    System.out.println(testHarness.program);
+                    if (debug) System.out.println(testHarness.program);
                     if (verifyProgram(testHarness, annotation)) {
-                        double floatTime = FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
+                        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
+                        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
+                        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
                         double doubleTime = FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
+                        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
+                        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
+                        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
+                        double floatTime = FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
                         System.out.println("Time to execute float: " + floatTime / 1000);
                         System.out.println("Time to execute double: " + doubleTime / 1000);
                         double savedTime = (doubleTime - floatTime)/doubleTime;
@@ -66,7 +75,7 @@ public class FPErrorBound {
 
         for(int i = 0; i < numberOfSamples; i++) {
             double res = (double) method.invoke(null);
-            System.out.println("Error is: " + res);
+            log("Error is: " + res);
             if(Math.abs(res) <= annotation.precision){
                 currentPassCount++;
             }
@@ -80,6 +89,12 @@ public class FPErrorBound {
         {
             System.out.println(String.format("Failed with %d / %d, needed %d", currentPassCount, numberOfSamples, numberOfPassSamples));
             return false;
+        }
+    }
+
+    public static void log(Object s) {
+        if (debug) {
+            System.out.println(s);
         }
     }
 }
