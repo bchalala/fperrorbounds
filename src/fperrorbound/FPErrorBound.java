@@ -25,7 +25,7 @@ public class FPErrorBound {
                 try {
                     var testHarness = gen.genStandardHarness();
                     System.out.println("Test harness successfully generated");
-                    if (debug) System.out.println(testHarness.program);
+                    log(testHarness.program);
                     if (verifyProgram(testHarness, annotation)) {
                         FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
                         FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
