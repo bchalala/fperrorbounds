@@ -3,12 +3,12 @@ import org.apache.commons.math3.distribution.UniformRealDistribution;
 import java.lang.Math;
 
 public class TestHarness {
-    public static double sampleUniform(double min, double max) {
+    public static double uniform(double min, double max) {
         UniformRealDistribution urd = new UniformRealDistribution(min, max);
         return urd.sample();
     }
 
-    public static double sampleGaussian(double mean, double sd) {
+    public static double gaussian(double mean, double sd) {
         NormalDistribution nd = new NormalDistribution(mean, sd);
         return nd.sample();
     }
