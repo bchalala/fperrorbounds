@@ -24,6 +24,12 @@ public class FPErrorBound {
                     System.out.println("Test harness successfully generated");
                     System.out.println(testHarness.program);
                     if (verifyProgram(testHarness, annotation)) {
+                        double floatTime = FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
+                        double doubleTime = FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
+                        System.out.println(floatTime);
+                        System.out.println(doubleTime);
+                        double savedTime = (doubleTime - floatTime)/doubleTime;
+                        System.out.println("Saved time % "+savedTime*100);
                         System.out.println("Q.E.D.");
                     } else {
                         System.out.println("Unable to verify with current annotation.");
