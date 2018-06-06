@@ -1,4 +1,4 @@
-public class Test {
+public class Exp {
     @ConfidenceAnnotation(
             epsilon=0.03,
             confidence = 95.0,

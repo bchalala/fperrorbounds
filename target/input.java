@@ -1,5 +1,5 @@
 
-public class Test {
+public class Input {
     @ConfidenceAnnotation(
             epsilon=0.01,
             confidence = 95.0,
