@@ -15,6 +15,7 @@ import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.printer.YamlPrinter;
 
+import java.lang.RuntimeException;
 import java.io.FileInputStream;
 import java.util.EnumSet;
 import java.util.ArrayList;
@@ -23,9 +24,9 @@ import java.util.ArrayList;
 
 public class FPJavaCodeGenerator {
 
-    private static GetMethodVisitor getmethodvisitor = new GetMethodVisitor();
     private static DoubleReplacementVisitor doublereplacementvisitor = new DoubleReplacementVisitor();
     
+    private CompilationUnit inputCU;
     private MethodDeclaration origMethodDecl;
     private MethodDeclaration allDoublesMethodDecl;
     private CompilationUnit template;
@@ -36,14 +37,20 @@ public class FPJavaCodeGenerator {
     private YamlPrinter printer = new YamlPrinter(true);
 
     public FPJavaCodeGenerator(String file, FPErrorAnnotation annotation) throws Exception {
+
         // Parse the template file
         var in = new FileInputStream("target/template.java");
         template = JavaParser.parse(in);
         
         // Parse the input
         in = new FileInputStream(file);
-        CompilationUnit cu = JavaParser.parse(in);
-        origMethodDecl = getMethod(cu);
+        inputCU = JavaParser.parse(in);
+        origMethodDecl = getMethod(inputCU);
+        if (origMethodDecl == null) {
+            System.out.println("Error: Input program needs to define probCalc");
+            throw new RuntimeException();
+        }
+        
         allDoublesMethodDecl = createMethodDoubleClone(origMethodDecl);
 
         harnessNumber = 0;
@@ -65,7 +72,7 @@ public class FPJavaCodeGenerator {
         // Sample all arguments
         MethodDeclaration testMethod = testharness.getMethodsByName("test").get(0);
         BlockStmt testbody = testMethod.getBody().get();
-        sampleArgs(testbody, fnFloat.getParameters().size());
+        sampleArgs(testharness, testbody, fnFloat.getParameters().size());
         buildTestCalls(testbody, fnFloat.getParameters().size());
 
         return new FPTestProgram(templateClone.toString(), harnessName);
@@ -92,18 +99,30 @@ public class FPJavaCodeGenerator {
         return null;
     }
 
-    public void sampleArgs(BlockStmt body, int numSamples) {
-        if (numSamples <= 0)
-            return;
-        
-        MethodCallExpr sample = new MethodCallExpr("sample");
-        sample.addArgument(String.valueOf(annotation.min.get(annotation.min.size() - numSamples)));
-        sample.addArgument(String.valueOf(annotation.max.get(annotation.max.size() - numSamples)));
-        VariableDeclarationExpr decl = new VariableDeclarationExpr(PrimitiveType.doubleType(), "a" + numSamples);
-        AssignExpr assignexpr = new AssignExpr(decl, sample, AssignExpr.Operator.ASSIGN);
-        body.addStatement(0, assignexpr);
+    public void sampleArgs(ClassOrInterfaceDeclaration testharness, BlockStmt body, int numSamples) {
+        String methodCall = "";
+        if (annotation.sampleMethod.equals("Uniform")) {
+            methodCall = "sampleUniform";
+        } else if (annotation.sampleMethod.equals("Gaussian")) {
+            methodCall = "sampleGaussian";
+        } else {
+            methodCall = annotation.sampleMethod;
+            GetMethodVisitor gmv = new GetMethodVisitor(methodCall, methodCall);
+            gmv.visit(inputCU, null);
+            testharness.addMember(gmv.methodDecl);
+        }
 
-        sampleArgs(body, numSamples - 1);
+        
+        for (int i = numSamples - 1; i >= 0; i--) {
+            MethodCallExpr sample = new MethodCallExpr(methodCall);
+            if (annotation.sampleMethod.equals("Uniform") || annotation.sampleMethod.equals("Gaussian")) {
+                sample.addArgument(String.valueOf(annotation.min.get(i)));
+                sample.addArgument(String.valueOf(annotation.max.get(i)));
+            }
+            VariableDeclarationExpr decl = new VariableDeclarationExpr(PrimitiveType.doubleType(), "a" + i);
+            AssignExpr assignexpr = new AssignExpr(decl, sample, AssignExpr.Operator.ASSIGN);
+            body.addStatement(0, assignexpr);
+        }
     }
     
     public static void buildTestCalls(BlockStmt body, int argnums) {
@@ -116,6 +135,7 @@ public class FPJavaCodeGenerator {
 
     // Gets the method we are trying to test
     public static MethodDeclaration getMethod(CompilationUnit cu) {
+        GetMethodVisitor getmethodvisitor = new GetMethodVisitor("probCalc", "fnFloat");
         EnumSet<Modifier> modifiers = EnumSet.of(Modifier.PUBLIC);
         modifiers.add(Modifier.STATIC);
         getmethodvisitor.visit(cu, null);
@@ -137,12 +157,22 @@ public class FPJavaCodeGenerator {
      * Simple visitor implementation for visiting MethodDeclaration nodes.
      */
     private static class GetMethodVisitor extends VoidVisitorAdapter<Void> {
-        protected MethodDeclaration methodDecl;
+        protected MethodDeclaration methodDecl = null;
+        private String m;
+        private String setName;
+
+        public GetMethodVisitor(String methodString, String setName) {
+            m = methodString;
+            this.setName = setName;
+        }
 
         @Override
         public void visit(MethodDeclaration n, Void arg) {
-            methodDecl = n;
-            methodDecl.setName("fnFloat");
+            if (n.getName().toString().equals(m))
+            {
+                methodDecl = n;
+                methodDecl.setName(setName);
+            }
         }
     }
 
@@ -174,7 +204,7 @@ public class FPJavaCodeGenerator {
                     argname = "(float) " + argname;
                 }
 
-                for (int i = 1; i <= num; i++) {
+                for (int i = 0; i < num; i++) {
                     n.addArgument(argname + i);
                 }
             }
@@ -201,6 +231,10 @@ public class FPJavaCodeGenerator {
 
         @Override
         public void visit(DoubleLiteralExpr n, Void arg) {
+            if (n.getValue().contains("x")) {
+                return;
+            }
+
             char toReplace = 'd';
             char replaceStr = 'f';
             if (floatToDouble) {

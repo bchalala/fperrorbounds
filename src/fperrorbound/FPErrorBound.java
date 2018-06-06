@@ -73,7 +73,7 @@ public class FPErrorBound {
         else
         {
             System.out.println(String.format("Failed with %d / %d, needed %d", currentPassCount, numberOfSamples, numberOfPassSamples));
-            throw new VerificationException("Unable to verify the program for given arguments.");
+            return false;
         }
     }
 }

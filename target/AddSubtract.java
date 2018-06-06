@@ -3,6 +3,7 @@ public class Test {
             epsilon=0.03,
             confidence = 95.0,
             precision = 0.000001,
+            sample = "Uniform",
             min = {0.5},
             max = {0.7}
     )

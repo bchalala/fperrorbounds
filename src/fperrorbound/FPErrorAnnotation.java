@@ -17,12 +17,11 @@ public class FPErrorAnnotation {
     public double epsilon = 0.03;
     public double confidence = .95;
     public double precision = 0.01;
+    public String sampleMethod = "";
     public ArrayList<Double> min = new ArrayList<>();
     public ArrayList<Double> max = new ArrayList<>();
 
     FPErrorAnnotation(String file) throws Exception{
-        HashMap<String, Integer> methodSampleMap = new HashMap<>();
-        String method = null;
         var in = new FileInputStream(file);
         CompilationUnit cu = JavaParser.parse(in);
         MethodAnnotationVisitor methodAnnotationVisitor = new MethodAnnotationVisitor();
@@ -30,20 +29,30 @@ public class FPErrorAnnotation {
         epsilon = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(0).getValue().asDoubleLiteralExpr().asDouble();
         confidence = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(1).getValue().asDoubleLiteralExpr().asDouble();
         precision = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(2).getValue().asDoubleLiteralExpr().asDouble();
-        int size = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asArrayInitializerExpr().getValues().size();
-        for(int j=0;j<size;j++){
-            min.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asArrayInitializerExpr().getValues().get(j).asDoubleLiteralExpr().asDouble());
-            max.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(4).getValue().asArrayInitializerExpr().getValues().get(j).asDoubleLiteralExpr().asDouble());
+        sampleMethod = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(3).getValue().asStringLiteralExpr().asString();
+        System.out.println(sampleMethod);
+        if (sampleMethod.equals("Uniform") || sampleMethod.equals("Gaussian"))
+        {
+            int size = methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(4).getValue().asArrayInitializerExpr().getValues().size();
+            for(int j=0;j<size;j++){
+                min.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(4).getValue().asArrayInitializerExpr().getValues().get(j).asDoubleLiteralExpr().asDouble());
+                max.add(methodAnnotationVisitor.methodAnnotations.get(methodAnnotationVisitor.method).get(5).getValue().asArrayInitializerExpr().getValues().get(j).asDoubleLiteralExpr().asDouble());
+            }
         }
     }
 
     private static class MethodAnnotationVisitor extends VoidVisitorAdapter<Void> {
         protected HashMap<String, NodeList<MemberValuePair>> methodAnnotations = new HashMap<>();
-        protected String method;
+        protected String method = "";
         @Override
         public void visit(MethodDeclaration n, Void arg) {
-            method = n.getName().asString();
-            if(n.getAnnotations() != null){
+            String m = n.getName().asString();
+            if (!m.equals("probCalc")) {
+                return;
+            } else {
+                method = m;
+            }
+            if(n.getAnnotations() != null ){
                 for(AnnotationExpr annotationExpr : n.getAnnotations()){
                     NormalAnnotationExpr expr = (NormalAnnotationExpr) annotationExpr;
                     methodAnnotations.put(n.getName().toString(),expr.getPairs());
