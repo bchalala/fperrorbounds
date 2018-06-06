@@ -23,16 +23,23 @@ public class FPGenerateOptimizedProgram {
 
     public static long getEstimatedRunTime(FPTestProgram program, FPErrorAnnotation annotation, String methodName) throws Exception {
         Method fnFloat = FPErrorBound.returnCompiledMethod(methodName, program);
+        Method sample = FPErrorBound.returnCompiledMethod("sample",program);
         long estimatedTime = 0;
         int numberOfSamples = FPSamples.generateSampleNumber(annotation.epsilon, annotation.confidence);
         int numberOfPassSamples = (int) ((annotation.confidence * numberOfSamples) / 100);
 
         if (FPErrorBound.verifyProgram(program, annotation)) {
-            long startTime = System.currentTimeMillis();
             for (int i = 0; i < numberOfPassSamples; i++) {
-                fnFloat.invoke(null);
+                Double[] functionArgs = new Double[annotation.min.size()];
+                for(int j=0;j<annotation.min.size();j++){
+                    functionArgs[j] = (Double) sample.invoke(null,annotation.min.get(j),annotation.max.get(j));
+                }
+                long startTime = System.nanoTime();
+                 fnFloat.invoke(null);
+                estimatedTime = estimatedTime+ (System.nanoTime() - startTime);
+
             }
-            estimatedTime = System.currentTimeMillis() - startTime;
+
 
         }
         return estimatedTime;
