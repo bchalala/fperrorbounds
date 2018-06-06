@@ -2,10 +2,10 @@ public class DivideByTwo {
     @ConfidenceAnnotation(
             epsilon=0.03,
             confidence = 95.0,
-            precision = 0.01,
+            precision = 0.001,
             distribution = "uniform",
-            min = {0.0},
-            max = {1.0}
+            min = {22.0},
+            max = {100000.0}
     )
     public static float probCalc(float param)
     {
@@ -14,3 +14,4 @@ public class DivideByTwo {
         return x*param;
     }
 }
+
