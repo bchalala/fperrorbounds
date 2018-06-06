@@ -26,8 +26,8 @@ public class FPErrorBound {
                     if (verifyProgram(testHarness, annotation)) {
                         double floatTime = FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
                         double doubleTime = FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-                        System.out.println(floatTime);
-                        System.out.println(doubleTime);
+                        System.out.println("Time to execute float: "+floatTime);
+                        System.out.println("Time to execute double: "+doubleTime);
                         double savedTime = (doubleTime - floatTime)/doubleTime;
                         System.out.println("Saved time % "+savedTime*100);
                         System.out.println("Q.E.D.");
