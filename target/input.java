@@ -19,6 +19,6 @@ public class Input {
         double s = urd.sample();
         int sint = (int) s;
         if (sint % 2 == 0) { return s; }
-        else { sampleCrazy(); }
+        else { return sampleUniformEvens(); }
     }
 }
