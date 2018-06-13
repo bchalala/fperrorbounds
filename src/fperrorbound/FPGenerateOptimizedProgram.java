@@ -31,8 +31,6 @@ public class FPGenerateOptimizedProgram {
         for (int i = 0; i < numberOfPassSamples; i++) {
             double[] functionArgs = new double[fnFloat.getParameterCount()];
             for(int j=0;j<fnFloat.getParameterCount();j++){
-                //var a = sample.getParameterTypes();
-                //Arrays.stream(a).forEach(x -> System.out.println(x.getName()));
                 if(sample.getParameterCount()>0){
                     functionArgs[j] = (double) sample.invoke(null,annotation.min.get(j),annotation.max.get(j));
                 } else{
@@ -45,7 +43,7 @@ public class FPGenerateOptimizedProgram {
                 if (fnFloat.getParameterCount() < 2 ) {
                     fnFloat.invoke(null, (float)functionArgs[0]);
                 } else {
-                    FPErrorBound.log(fnFloat.invoke(null, (float)functionArgs[0], (float)functionArgs[1]));
+                    fnFloat.invoke(null, (float)functionArgs[0], (float)functionArgs[1]);
                 }
             } else{
                 if (fnFloat.getParameterCount() < 2) {
