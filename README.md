@@ -5,4 +5,6 @@
 4. `ant` to build
 
 # Running FPErrorBound
-Call `ant run -Dinput=[filename]`
+To run the basic verification, use the following command `ant run -Dinput=[filename]`
+Set the flag `-DgenPrecision=genPrecision` to use the precision generation features which geturns the highest verifiable precision for the given confidence and epsilon in the input program.
+Additionally, use the `Ddebug=debug` flag in order to turn on debug print messages.
