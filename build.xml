@@ -54,6 +54,7 @@
         <java jar="${build}/jar/fperrorbound.jar" fork="true">
             <arg value = "${input}"/>
             <arg value = "${genPrecision}"/>
+            <arg value = "${debug}"/>
         </java>
     </target>
 

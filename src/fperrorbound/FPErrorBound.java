@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.Arrays;
 
 public class FPErrorBound {
-    public static boolean debug = true;
+    public static boolean debug = false;
 
     public static void main(String[] args) {
         boolean genPrecision = false;
         for (String s : args) {
             if(s.equals("genPrecision")) {
                 genPrecision = true;
+            }
+            if(s.equals("debug")) {
+                debug = true;
             }
         }
 
@@ -111,6 +114,9 @@ public class FPErrorBound {
         if (genPrecision) {
             Arrays.sort(sampleArray);
             var verifiedPrecision = sampleArray[numberOfPassSamples + 1];
+            for (int i = 0; i < numberOfSamples; i++) {
+                log(sampleArray[i]);
+            }
             System.out.println("Verified for precision: " + verifiedPrecision);
             return true;
         }
