@@ -29,11 +29,16 @@ public class FPErrorBound {
                 var testHarness = gen.genStandardHarness();
                 System.out.println("Test harness successfully generated");
                 log(testHarness.program);
-                if (verifyProgram(testHarness, annotation, genPrecision)) {
-                    System.out.println("Q.E.D.");
-                    profileProgram(testHarness, annotation);
+
+                if (genPrecision) {
+                    double precision = getPrecision(testHarness, annotation);
+                    System.out.println("Program verified for precision: " + Double.toString(precision));
                 } else {
-                    System.out.println("Unable to verify with current annotation.");
+                    if (verifyProgram(testHarness, annotation)) {
+                        System.out.println("Q.E.D.");
+                    } else {
+                        System.out.println("Unable to verify with current annotation.");
+                    }
                 }
             } catch (VerificationException e){ System.err.println(e.getMessage()); }
         } catch (Exception e) {
@@ -49,45 +54,12 @@ public class FPErrorBound {
         return method;
     }
 
-    public static String getOptimisedProgram(List<FPTestProgram> candidatePrograms, FPErrorAnnotation annotation) throws Exception{
+    public static String getOptimisedProgram(List<FPTestProgram> candidatePrograms, FPErrorAnnotation annotation) throws Exception {
         List<FPTestProgram> verifiedPrograms = FPGenerateOptimizedProgram.getValidPrograms(candidatePrograms,annotation);
         return FPGenerateOptimizedProgram.getOptimizedProgram(verifiedPrograms).program;
     }
 
-    public static void profileProgram(FPTestProgram testHarness, FPErrorAnnotation annotation) throws Exception {
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        double floatTime = FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnFloat");
-        double doubleTime = FPGenerateOptimizedProgram.getEstimatedRunTime(testHarness,annotation,"fnDouble");
-        System.out.println("Time to execute float: " + floatTime / 1000);
-        System.out.println("Time to execute double: " + doubleTime / 1000);
-        double savedTime = (doubleTime - floatTime)/doubleTime;
-        System.out.println("Saved time % "+savedTime*100);
-    }
-
-    public static boolean verifyProgram(FPTestProgram testHarness, FPErrorAnnotation annotation, boolean genPrecision) throws Exception{
+    public static double getPrecision(FPTestProgram testHarness, FPErrorAnnotation annotation) throws Exception {
         Method method = returnCompiledMethod("test",testHarness);
 
         int numberOfSamples = FPSamples.generateSampleNumber(annotation.epsilon,annotation.confidence);
@@ -96,40 +68,42 @@ public class FPErrorBound {
 
         double[] sampleArray = new double[numberOfSamples];
 
-        System.out.println("Harness: " + testHarness.harnessClass);
-        System.out.println("Samples required to verify precision: " + numberOfPassSamples);
-
-        if (!genPrecision) {
-            System.out.println("Attempting to verify for precision: " + annotation.precision);
-        }
-
         for(int i = 0; i < numberOfSamples; i++) {
             double res = (double) method.invoke(null);
             sampleArray[i] = res;
+        }
+
+        Arrays.sort(sampleArray);
+        var verifiedPrecision = sampleArray[numberOfPassSamples + 1];
+        return verifiedPrecision;
+    }
+
+    public static boolean verifyProgram(FPTestProgram testHarness, FPErrorAnnotation annotation) throws Exception {
+        Method method = returnCompiledMethod("test",testHarness);
+
+        int numberOfSamples = FPSamples.generateSampleNumber(annotation.epsilon,annotation.confidence);
+        int numberOfPassSamples = (int) ((annotation.confidence*numberOfSamples)/100);
+        int currentPassCount = 0;
+
+        System.out.println("Harness: " + testHarness.harnessClass);
+        System.out.println("Samples required to verify precision: " + numberOfPassSamples);
+        System.out.println("Attempting to verify for precision: " + annotation.precision);
+
+        for(int i = 0; i < numberOfSamples; i++) {
+            double res = (double) method.invoke(null);
             if(Math.abs(res) <= annotation.precision){
                 currentPassCount++;
             }
         }
 
-        if (genPrecision) {
-            Arrays.sort(sampleArray);
-            var verifiedPrecision = sampleArray[numberOfPassSamples + 1];
-            for (int i = 0; i < numberOfSamples; i++) {
-                log(sampleArray[i]);
-            }
-            System.out.println("Verified for precision: " + verifiedPrecision);
+        if(currentPassCount >= numberOfPassSamples){
+            System.out.println(String.format("Passed with %d / %d", currentPassCount, numberOfSamples));
             return true;
         }
-        else {
-            if(currentPassCount >= numberOfPassSamples){
-                System.out.println(String.format("Passed with %d / %d", currentPassCount, numberOfSamples));
-                return true;
-            }
-            else
-            {
-                System.out.println(String.format("Failed with %d / %d, needed %d", currentPassCount, numberOfSamples, numberOfPassSamples));
-                return false;
-            }
+        else
+        {
+            System.out.println(String.format("Failed with %d / %d, needed %d", currentPassCount, numberOfSamples, numberOfPassSamples));
+            return false;
         }
     }
 
