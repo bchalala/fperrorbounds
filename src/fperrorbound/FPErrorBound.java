@@ -32,7 +32,7 @@ public class FPErrorBound {
 
                 if (genPrecision) {
                     double precision = getPrecision(testHarness, annotation);
-                    System.out.println("Program verified for precision: " + Double.toString(precision));
+                    System.out.println("Satisfying precision assignment: " + Double.toString(precision));
                 } else {
                     if (verifyProgram(testHarness, annotation)) {
                         System.out.println("Q.E.D.");

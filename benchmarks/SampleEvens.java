@@ -1,7 +1,7 @@
 
-public class Input {
+public class SampleEvens {
     @ConfidenceAnnotation(
-            epsilon=0.01,
+            epsilon = 0.01,
             confidence = 95.0,
             precision = 0.005,
             sample = "sampleUniformEvens"
