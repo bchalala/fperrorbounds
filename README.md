@@ -19,7 +19,7 @@ Additionally, use the `-Ddebug=debug` flag in order to turn on debug print messa
 
 Epsilon and confidence determine the number of samples (by Hoeffding's Inequality) required to verify input programs for a given confidence. The sample field is for specifying what distribution inputs must be drawn from. We currently allow for "uniform", "gaussian", or user defined distributions (which are defined in probabilistic programs). This annotation must always be present, and must at least specify the epsilon, confidence, precision, and sample fields. 
 
-Additionally, the input function is required to declared as `public static` and must have the name `probCalc`. Additionally, arguments must be either of type `float` or of type `double`. The return type must also be `float` or `double`.
+Additionally, the input function is required to declared as `public static` and must have the name `probCalc`. Additionally, arguments must be either of type `float` or of type `double`. The return type must also be `float` or `double`. The class name of the defined function does not matter.
 
 The following annotation specifies that the two arguments for the function that we are verifying are drawn from uniform distributions, the arg1 being drawn from a uniform distribution from 0.0009 to 2.5, and arg2 being drawn from a uniform distribution from 140.89 to 360.0. 
 
@@ -52,7 +52,7 @@ The following annotation specifies that the two arguments for the function that 
 We also allow for input distributions to be specified by users, and all arguments will be drawn from the input distribution. The sample parameter must contain the string name of the distribution that is being sampled from. The following is an example of a user defined input distribution.
 
 ``` java
-public class SampleEvens {
+public class DrawingFromUserDistribution {
     @ConfidenceAnnotation(
             epsilon = 0.01,
             confidence = 95.0,
